@@ -29,7 +29,7 @@ const App = () => {
         <Routes>
           
           {/* Admin route */}
-          <Route path='/' element={<></>}/>
+          <Route path='/' element={<Dashboard/>}/>
           <Route path='/admin-dashboard' element={<Dashboard/>}/>
           <Route path='/all-appointments' element={<AllAppointments/>}/>
           <Route path='/add-doctor' element={<AddDoctor/>}/>
