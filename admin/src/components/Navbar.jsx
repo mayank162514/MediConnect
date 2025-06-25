@@ -22,7 +22,7 @@ const Navbar = () => {
   return (
     <div className='flex justify-between items-center px-4 sm:px-10 py-3 border-b bg-white'>
         <div className='flex items-center gap-2 text-xs'>
-            <img className='w-36 cursor-pointer sm:w-40' src={assets.admin_logo} alt="" />
+            <img className='w-36 cursor-pointer sm:w-40' src={assets.admin_logo1} alt="" />
             <p className='border px-2.5 py-0.5 rounded-full border-gray-600'>{aToken ? 'Admin' : 'Doctor'}</p>
         </div>
         <button onClick={logout} className='bg-primary text-white text-sm px-10 py-2 rounded-full'>Logout</button>
