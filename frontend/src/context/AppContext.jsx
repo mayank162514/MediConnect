@@ -7,7 +7,7 @@ export const AppContext = createContext()
 const AppContextProvider = (props) => {
 
     const currencySymbol = '$'
-    const backendUrl = import.meta.env.VITE_BACKEND_URL
+    const backendUrl = "https://mediconnect-backend-2o4q.onrender.com"
 
     const [doctors, setDoctors] = useState([])
     const [token, setToken] = useState(()=>{
