@@ -12,8 +12,8 @@ const Contact = () => {
       <div className='flex flex-col justify-center items-start gap-6'>
         <p className='font-semibold text-lg text-gray-600'>OUR OFFICE</p>
         <p className='text-gray-500'>56432 Willms Station <br /> Suite 230, Los Angeles,USA</p>
-        <p className='text-gray-500'>Tel: (456) 567-4675 <br /> Email: prescriptodoc@gmail.com</p>
-        <p className='font-semibold text-lg text-gray-600'>Careers At PRESCRIPTO</p>
+        <p className='text-gray-500'>Tel: (456) 567-4675 <br /> Email: mediconnectdoc@gmail.com</p>
+        <p className='font-semibold text-lg text-gray-600'>Careers At Mediconnect</p>
         <p className='text-gray-500'>Learn more about out teams and job openings.</p>
         <button className='border border-black px-8 py-4 text-sm hover:bg-black hover:text-white transition-all duration-500'>Explore Jobs</button>
       </div>
