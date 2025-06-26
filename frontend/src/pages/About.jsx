@@ -10,10 +10,10 @@ const About = () => {
       <div className='my-10 flex flex-col md:flex-row gap-12'>
         <img className='w-full md:max-w-[360px]' src={assets.about_image} alt="" />
         <div className='flex flex-col justify-center gap-6 md:w-2/4 text-sm text-gray-600'>
-          <p>Welcome To Prescripto, Your Trusted Partner In Managing Your Healthcare Needs Conviently And Effectively. At Prescripto, We Understand The Challenge Individuals Face When It Comes To Scheduling Doctor Appointments And Managing Their Health Records.</p>
-          <p>Prescripto Is Committed To Excellence In HealthCare Technology. We Continuously Strive TO Enhance Our Platform, Intergrating The Latest Advancements To Improve User Experience And Deliver Superior Service. Whether You're Booking Your First Appointment Or Managing Onging Care, Prescripto Is Here To Support You Every Step Of The Way.</p>
+          <p>Welcome To Mediconnect, Your Trusted Partner In Managing Your Healthcare Needs Conviently And Effectively. At Mediconnect, We Understand The Challenge Individuals Face When It Comes To Scheduling Doctor Appointments And Managing Their Health Records.</p>
+          <p>Mediconnect Is Committed To Excellence In HealthCare Technology. We Continuously Strive TO Enhance Our Platform, Intergrating The Latest Advancements To Improve User Experience And Deliver Superior Service. Whether You're Booking Your First Appointment Or Managing Onging Care, Mediconnect Is Here To Support You Every Step Of The Way.</p>
           <b className='text-gray-800'>Our Vision</b>
-          <p>Our Vision At Prescripto Is To Create A Seamless Healthcare Experience For Every User. We Aim To Bridge The Gap Between Patients And Healthcare Providers, Making It Easier For You To Accsess The Care You Need, When You Need It.</p>
+          <p>Our Vision At Mediconnect Is To Create A Seamless Healthcare Experience For Every User. We Aim To Bridge The Gap Between Patients And Healthcare Providers, Making It Easier For You To Accsess The Care You Need, When You Need It.</p>
         </div>
       </div>
       <div className='text-xl my-4'>
