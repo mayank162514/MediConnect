@@ -37,3 +37,9 @@
 
 ### Image Management
 - **Cloudinary:** A cloud-based service that provides an end-to-end image and video management solution, including uploads, storage, manipulations, optimizations, and delivery.
+
+---
+
+# Quick Links
+### frontend = "https://mediconnect-frontend-afpw.onrender.com"
+### admin panel = "https://mediconnect-admin-fego.onrender.com"
