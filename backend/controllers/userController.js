@@ -125,41 +125,31 @@ const updateProfile = async (req, res) => {
 
 // api to book appointment
 const bookAppointment = async (req, res) => {
-
     try {
+        const { userId, docId, slotDate, slotTime } = req.body;
 
-        const { userId, docId, slotDate, slotTime } = req.body
-        // check if an appointment already exists for the doctor at the given slot
-        const existingAppointment = await appointmentModel.findOne({ docId, slotDate, slotTime });
+        // Atomically update doctor's slots_booked only if slot is not already booked
+        const doctor = await doctorModel.findOneAndUpdate(
+            {
+                _id: docId,
+                $or: [
+                    { [`slots_booked.${slotDate}`]: { $exists: false } },
+                    { [`slots_booked.${slotDate}`]: { $not: { $elemMatch: { $eq: slotTime } } } }
+                ],
+                available: true
+            },
+            {
+                $push: { [`slots_booked.${slotDate}`]: slotTime }
+            },
+            { new: true }
+        );
 
-        if (existingAppointment) {
+        if (!doctor) {
             return res.json({ success: false, message: 'Slot already booked' });
         }
 
-
-        const docData = await doctorModel.findById(docId).select('-password')
-
-        if (!docData.available) {
-            return res.json({ success: false, message: 'Doctor not available' })
-        }
-
-        let slots_booked = docData.slots_booked
-
-        // checking for slot availability
-        if (slots_booked[slotDate]) {
-            if (slots_booked[slotDate].includes(slotTime)) {
-                return res.json({ success: false, message: 'Slot not available' })
-            } else {
-                slots_booked[slotDate].push(slotTime)
-            }
-        } else {
-            slots_booked[slotDate] = []
-            slots_booked[slotDate].push(slotTime)
-        }
-
-        const userData = await userModel.findById(userId).select('-password')
-
-        delete docData.slots_booked
+        const userData = await userModel.findById(userId).select('-password');
+        const docData = await doctorModel.findById(docId).select('-password -slots_booked');
 
         const appointmentData = {
             userId,
@@ -170,19 +160,15 @@ const bookAppointment = async (req, res) => {
             slotTime,
             slotDate,
             date: Date.now()
-        }
+        };
 
-        const newAppointment = new appointmentModel(appointmentData)
-        await newAppointment.save()
+        const newAppointment = new appointmentModel(appointmentData);
+        await newAppointment.save();
 
-        // save new slots data in docData
-        await doctorModel.findByIdAndUpdate(docId, { slots_booked })
-
-        res.json({ success: true, message: 'Appointment Booked' })
-
+        res.json({ success: true, message: 'Appointment Booked' });
     } catch (error) {
-        console.log(error)
-        res.json({ success: false, message: error.message })
+        console.log(error);
+        res.json({ success: false, message: error.message });
     }
 }
 
