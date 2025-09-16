@@ -249,7 +249,7 @@ const paymentRazorpay = async (req, res) => {
 
         // creating options for razorpay payment
         const options = {
-            amount: appointmentData.amount*100,
+            amount: appointmentData.amount,
             currency: process.env.CURRENCY,
             receipt: appointmentId,
         }
