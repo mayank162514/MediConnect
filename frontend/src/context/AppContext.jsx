@@ -6,7 +6,7 @@ export const AppContext = createContext()
 
 const AppContextProvider = (props) => {
 
-    const currencySymbol = '₹'
+    const currencySymbol = '$'
     const backendUrl = "https://mediconnect-backend-2o4q.onrender.com"
 
     const [doctors, setDoctors] = useState([])
