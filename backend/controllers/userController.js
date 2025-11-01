@@ -6,6 +6,7 @@ import { v2 as cloudinary } from 'cloudinary'
 import doctorModel from '../models/doctorModel.js'
 import appointmentModel from '../models/appointmentModel.js'
 import razorpay from 'razorpay'
+import mongoose from 'mongoose';
 
 // api to register user
 const registerUser = async (req, res) => {
@@ -124,11 +125,64 @@ const updateProfile = async (req, res) => {
 }
 
 // api to book appointment
+// const bookAppointment = async (req, res) => {
+//     try {
+//         const { userId, docId, slotDate, slotTime } = req.body;
+
+//         // Atomically update doctor's slots_booked only if slot is not already booked
+//         const doctor = await doctorModel.findOneAndUpdate(
+//             {
+//                 _id: docId,
+//                 $or: [
+//                     { [`slots_booked.${slotDate}`]: { $exists: false } },
+//                     { [`slots_booked.${slotDate}`]: { $not: { $elemMatch: { $eq: slotTime } } } }
+//                 ],
+//                 available: true
+//             },
+//             {
+//                 $push: { [`slots_booked.${slotDate}`]: slotTime }
+//             },
+//             { new: true }
+//         );
+
+//         if (!doctor) {
+//             return res.json({ success: false, message: 'Slot already booked' });
+//         }
+
+//         const userData = await userModel.findById(userId).select('-password');
+//         const docData = await doctorModel.findById(docId).select('-password -slots_booked');
+
+//         const appointmentData = {
+//             userId,
+//             docId,
+//             userData,
+//             docData,
+//             amount: docData.fees,
+//             slotTime,
+//             slotDate,
+//             date: Date.now()
+//         };
+
+//         const newAppointment = new appointmentModel(appointmentData);
+//         await newAppointment.save();
+
+//         res.json({ success: true, message: 'Appointment Booked' });
+//     } catch (error) {
+//         console.log(error);
+//         res.json({ success: false, message: error.message });
+//     }
+// }
+
+
 const bookAppointment = async (req, res) => {
+    const session = await mongoose.startSession();
+    
     try {
+        session.startTransaction();
+
         const { userId, docId, slotDate, slotTime } = req.body;
 
-        // Atomically update doctor's slots_booked only if slot is not already booked
+        // Atomically find and update the doctor's slot
         const doctor = await doctorModel.findOneAndUpdate(
             {
                 _id: docId,
@@ -141,15 +195,17 @@ const bookAppointment = async (req, res) => {
             {
                 $push: { [`slots_booked.${slotDate}`]: slotTime }
             },
-            { new: true }
+            { new: true, session: session } // Pass the session
         );
 
         if (!doctor) {
-            return res.json({ success: false, message: 'Slot already booked' });
+            await session.abortTransaction();
+            session.endSession();
+            return res.json({ success: false, message: 'Slot already booked or doctor unavailable' });
         }
 
-        const userData = await userModel.findById(userId).select('-password');
-        const docData = await doctorModel.findById(docId).select('-password -slots_booked');
+        const userData = await userModel.findById(userId).select('-password').session(session);
+        const docData = await doctorModel.findById(docId).select('-password -slots_booked').session(session);
 
         const appointmentData = {
             userId,
@@ -163,12 +219,22 @@ const bookAppointment = async (req, res) => {
         };
 
         const newAppointment = new appointmentModel(appointmentData);
-        await newAppointment.save();
+        
+        // Save the corresponding appointment record
+        await newAppointment.save({ session: session }); // Pass the session
 
-        res.json({ success: true, message: 'Appointment Booked' });
+        // If both operations succeed, commit the transaction
+        await session.commitTransaction();
+
+        res.json({ success: true, message: 'Appointment Booked Successfully' });
+
     } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: error.message });
+        // If any operation fails, roll back all changes
+        await session.abortTransaction(); 
+        res.status(500).json({ success: false, message: 'An error occurred, appointment was not booked.', error: error.message });
+    
+    } finally {
+        session.endSession();
     }
 }
 
@@ -187,6 +253,7 @@ const listAppointment = async (req, res) => {
         res.json({ success: false, message: error.message })
     }
 }
+
 
 // api to cancel appointment
 const cancelAppointment = async (req, res) => {
